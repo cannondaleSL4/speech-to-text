@@ -1,0 +1,13 @@
+speech:
+  dir_path: ${SPEECH_DIR_PATH}
+  model_path: ${SPEECH_MODEL_PATH}
+  sample_rate: ${SPEECH_MODEL_RATE:44100}
+logging:
+  level:
+    root: ${LOG_LEVEL:INFO}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
