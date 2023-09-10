@@ -1,0 +1,51 @@
+# Compiled class files
+*.class
+
+# Log files
+*.log
+
+# Directory for instrumented classes
+jacoco/
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+*.tar
+
+# Virtual Machine crash logs
+hs_err_pid*
+
+# Maven - Ignore all the build directories and the Maven wrapper
+/target/
+/.mvn/
+/mvnw
+/mvnw.cmd
+
+# IntelliJ IDEA specific
+/.idea/
+*.iml
+*.iws
+
+# Eclipse specific
+/.classpath
+/.project
+/.settings/
+
+# Mac OS specific
+.DS_Store
+
+# Windows specific
+Thumbs.db
+
+# Spring Boot specific
+spring-boot-devtools/

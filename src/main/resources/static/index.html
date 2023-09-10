@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSE Example</title>
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            var source = new EventSource('/sse');
+            source.onopen = function (event) {
+                console.log("Connection was opened");
+            };
+
+            source.onmessage = function (event) {
+                console.log("Received raw data:", event.data);
+
+                try {
+                    var jsonData = JSON.parse(event.data);
+                    console.log("Parsed data:", jsonData);
+
+                    if (jsonData && jsonData.text) {
+                        document.getElementById("sseData").textContent = jsonData.text;
+                    } else {
+                        console.log("JSON does not have the expected format");
+                    }
+                } catch (error) {
+                    console.error("Error parsing the received data:", error);
+                }
+            };
+
+            source.onerror = function (event) {
+                console.error("Error occurred:", event);
+                source.close();
+            };
+        });
+    </script>
+</head>
+
+<body>
+<h2>SSE Messages:</h2>
+<div id="sseData">{}</div>
+</body>
+
+</html>

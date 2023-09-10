@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-stt-chart
+  labels:
+    {{- include "stt-chart.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "stt-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "stt-chart.labels" . | nindent 8 }}
+    spec:
+      containers:
+          - name: stt-container
+            image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+            imagePullPolicy: {{ .Values.image.pullPolicy }}
+            resources:
+              requests:
+                memory: "{{ .Values.resources.requests.memory }}"
+                cpu: "{{ .Values.resources.requests.cpu }}"
+              limits:
+                memory: "{{ .Values.resources.limits.memory }}"
+                cpu: "{{ .Values.resources.limits.cpu }}"
+            env:
+              - name: SPEECH_DIR_PATH
+                value: "{{ .Values.speech.dirPath }}"
+              - name: SPEECH_MODEL_PATH
+                value: "{{ .Values.speech.modelPath }}"
+              - name: SPEECH_MODEL_RATE
+                value: "{{ .Values.speech.sampleRate }}"
+              - name: JAVA_OPTS
+                value: "{{ .Values.javaOpts }}"
+              - name: LOG_LEVEL
+                value: "{{ .Values.speech.logLevel }}"
+            volumeMounts:
+              - name: speech-dir-volume
+                mountPath: "{{ .Values.speech.dirPath }}"
+              - name: model-dir-volume
+                mountPath: "{{ .Values.speech.modelPath }}"
+            livenessProbe:
+              httpGet:
+                path: /actuator/health
+                port: 8080
+              initialDelaySeconds: 60
+              periodSeconds: 10
+            readinessProbe:
+              httpGet:
+                path: /actuator/health
+                port: 8080
+              initialDelaySeconds: 30
+              periodSeconds: 5
+      volumes:
+        - name: speech-dir-volume
+          hostPath:
+            path: "{{ .Values.speech.hostDirPath }}"
+        - name: model-dir-volume
+          hostPath:
+            path: "{{ .Values.speech.hostModelPath }}"
