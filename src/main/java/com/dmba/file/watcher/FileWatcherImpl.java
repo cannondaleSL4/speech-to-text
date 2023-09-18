@@ -4,6 +4,9 @@ import com.dmba.file.service.FileFinder;
 import com.dmba.config.SpeechProperties;
 import com.dmba.speech.SpeechToText;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
+import org.apache.commons.io.monitor.FileAlterationMonitor;
+import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +16,11 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
-@Service
 public class FileWatcherImpl implements FileWatcher {
 
     private final SpeechProperties speechProperties;
@@ -24,7 +28,7 @@ public class FileWatcherImpl implements FileWatcher {
     private final Path dir;
     private final SpeechToText speechToText;
 
-    @Autowired
+
     public FileWatcherImpl(SpeechProperties speechProperties, FileFinder fileFinderService, SpeechToText speechToText) {
         this.speechProperties = speechProperties;
         this.fileFinderService = fileFinderService;
@@ -38,46 +42,38 @@ public class FileWatcherImpl implements FileWatcher {
     }
 
     public void watch() {
-        try (WatchService watchService = FileSystems.getDefault().newWatchService()) {
-            dir.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
+        FileAlterationObserver observer = new FileAlterationObserver(dir.toString());
+        observer.addListener(new FileAlterationListenerAdaptor() {
 
-            while (true) {
-                WatchKey key;
+            @Override
+            public void onFileCreate(File file) {
                 try {
-                    key = watchService.take();
-                } catch (InterruptedException ex) {
-                    log.error("Watcher service interrupted", ex);
-                    return;
-                }
-
-                for (WatchEvent<?> event : key.pollEvents()) {
-                    WatchEvent.Kind<?> kind = event.kind();
-
-                    if (kind == StandardWatchEventKinds.OVERFLOW) {
-                        continue;
-                    }
-
-                    List<File> newFiles = fileFinderService.getNewFiles();
-                    newFiles.forEach(file -> {
-                        try {
-                            BasicFileAttributes attrs = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
-                            Instant creationTime = attrs.creationTime().toInstant();
-                            long sizeInKB = file.length() / 1024;
-                            log.info("New file created: " + file.getName() + ", Creation time: " + creationTime + ", Size: " + sizeInKB + " KB");
-                            speechToText.getTextFromSpeech(file);
-                        } catch (IOException e) {
-                            log.error("Error reading file attributes for: " + file.getName(), e);
-                        }
-                    });
-                }
-
-                boolean valid = key.reset();
-                if (!valid) {
-                    break;
+                    BasicFileAttributes attrs = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+                    Instant creationTime = attrs.creationTime().toInstant();
+                    long sizeInKB = file.length() / 1024;
+                    log.info("New file created: " + file.getName() + ", Creation time: " + creationTime + ", Size: " + sizeInKB + " KB");
+                    speechToText.getTextFromSpeech(file);
+                } catch (IOException e) {
+                    log.error("Error reading file attributes for: " + file.getName(), e);
                 }
             }
-        } catch (IOException ex) {
-            log.error("Error while watching files", ex);
+
+            @Override
+            public void onFileChange(File file) {
+            }
+
+            @Override
+            public void onFileDelete(File file) {
+            }
+        });
+
+        FileAlterationMonitor monitor = new FileAlterationMonitor(1000, Collections.singleton(observer)); // проверка каждую секунду
+        try {
+            monitor.start();
+            log.info("Watching directory: " + dir);
+        } catch (Exception e) {
+            log.error("Error while watching files", e);
         }
     }
+
 }
