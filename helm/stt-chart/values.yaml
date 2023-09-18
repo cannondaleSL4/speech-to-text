@@ -69,8 +69,8 @@ speech:
   modelPath: "/path/to/model"
   sampleRate: "44100"
   logLevel: "Info"
-  hostDirPath: "/home/dima/Yandex.Disk/dic"
-  hostModelPath: "/home/dima/model"
+  hostDirPath: "/Users/dmitriybalasn/Yandex.Disk.localized/dic"
+  hostModelPath: "/Users/dmitriybalasn/model"
 
 autoscaling:
   enabled: true

@@ -32,20 +32,22 @@ public class SpeechToTextImpl implements SpeechToText {
 
     private final SpeechProperties speechProperties;
 
-    private final Path dirModel;
+    private final String dirModel;
 
     private Model model;
 
     @Autowired
     public SpeechToTextImpl(SpeechProperties speechProperties) {
         this.speechProperties = speechProperties;
-        this.dirModel = Paths.get(speechProperties.getModelPath());
+        this.dirModel =speechProperties.getModelPath();
         initModel();
     }
 
     private void initModel() {
         try {
-            this.model = new Model(dirModel.toString());
+            System.load("/Users/dmitriybalasn/vosk-api/src/libvosk.dylib");
+            this.model = new Model(dirModel);
+            System.out.println("test");
         } catch (Exception e) {
             throw new RuntimeException("Error initializing the speech model", e);
         }

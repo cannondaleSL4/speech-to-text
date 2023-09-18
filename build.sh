@@ -27,20 +27,20 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Step 4: Save the image to a tarball
-docker save localhost/speech-to-text:latest > speech-to-text.tar
-
-if [ $? -ne 0 ]; then
-    echo "Docker save operation failed!"
-    exit 1
-fi
-
-# Step 5: Import the image to MicroK8s
-microk8s ctr image import speech-to-text.tar
-
-if [ $? -ne 0 ]; then
-    echo "MicroK8s image import failed!"
-    exit 1
-fi
-
-echo "Successfully imported the image to MicroK8s: localhost/speech-to-text:latest"
+## Step 4: Save the image to a tarball
+#docker save localhost/speech-to-text:latest > speech-to-text.tar
+#
+#if [ $? -ne 0 ]; then
+#    echo "Docker save operation failed!"
+#    exit 1
+#fi
+#
+## Step 5: Import the image to MicroK8s
+#microk8s ctr image import speech-to-text.tar
+#
+#if [ $? -ne 0 ]; then
+#    echo "MicroK8s image import failed!"
+#    exit 1
+#fi
+#
+#echo "Successfully imported the image to MicroK8s: localhost/speech-to-text:latest"

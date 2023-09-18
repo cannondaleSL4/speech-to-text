@@ -1,6 +1,15 @@
 # Start from the official OpenJDK 17 base image
 FROM openjdk:17-jdk-slim
 
+FROM openjdk:17-jdk-slim
+
+# update
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+
 # Make port 8080 available to the world outside this container
 EXPOSE 8080
 
