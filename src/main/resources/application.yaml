@@ -2,7 +2,8 @@ speech:
   dir_path: ${SPEECH_DIR_PATH}
   model_path: ${SPEECH_MODEL_PATH}
   sample_rate: ${SPEECH_MODEL_RATE:44100}
-  arm64_specific: ${DYLD_LIBRARY_PATH:"/Users/dmitriybalasn/vosk-api/src:/opt/homebrew/opt/gcc/lib/gcc/current"}
+#  arm64_specific: ${ARM64_SPECIFIC:/Users/dmitriybalasn/vosk-api/src/libvosk.dylib}
+#  arm64_specific: ${DYLD_LIBRARY_PATH:"/Users/dmitriybalasn/vosk-api/src:/opt/homebrew/opt/gcc/lib/gcc/current"}
 
 logging:
   level:
@@ -13,3 +14,7 @@ management:
     web:
       exposure:
         include: health,info
+
+spring:
+  main:
+    allow-bean-definition-overriding: true

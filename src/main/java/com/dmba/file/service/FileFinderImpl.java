@@ -13,14 +13,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-@Service
 public class FileFinderImpl implements FileFinder {
 
     private final SpeechProperties speechProperties;
     private final File dir;
     private final long startTime;
 
-    @Autowired
     public FileFinderImpl(SpeechProperties speechProperties) {
         this.speechProperties = speechProperties;
         this.dir = new File(speechProperties.getDirPath());

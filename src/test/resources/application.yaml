@@ -1,0 +1,9 @@
+speech:
+  dir_path: "./src/test/resources/sounds"
+  model_path: "/Users/dmitriybalasn/model"
+  sample_rate: ${SPEECH_MODEL_RATE:44100}
+#  arm64_specific: ${ARM64_SPECIFIC:/Users/dmitriybalasn/vosk-api/src/libvosk.dylib}
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
