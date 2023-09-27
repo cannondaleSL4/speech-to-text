@@ -64,6 +64,3 @@ speech:
 ```
 
 For models in various languages, refer to this [this link](https://alphacephei.com/vosk/models).
-
-
-ARM64_SPECIFIC=/Users/dmitriybalasn/vosk-api/src/libvosk.dylib;DYLD_LIBRARY_PATH=/Users/dmitriybalasn/vosk-api/src:/opt/homebrew/opt/gcc/lib/gcc/current;SPEECH_DIR_PATH=/Users/dmitriybalasn/Yandex.Disk.localized/dic;SPEECH_MODEL_PATH=/Users/dmitriybalasn/model
