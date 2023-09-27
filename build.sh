@@ -30,11 +30,3 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Successfully built the Docker image: speech-to-text"
-
-# Step 3: Docker tag
-docker tag speech-to-text:latest localhost/speech-to-text:latest
-
-if [ $? -ne 0 ]; then
-    echo "Docker tag operation failed!"
-    exit 1
-fi
