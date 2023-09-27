@@ -4,17 +4,8 @@ import com.dmba.controller.SseController;
 import com.dmba.config.SpeechProperties;
 import com.dmba.vosk.SpeechToTextModel;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.vosk.Model;
-import org.vosk.Recognizer;
 
-import javax.annotation.PreDestroy;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 

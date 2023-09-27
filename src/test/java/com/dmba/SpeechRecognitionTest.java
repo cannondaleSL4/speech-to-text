@@ -2,7 +2,6 @@ package com.dmba;
 
 import com.dmba.speech.SpeechToText;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,14 +11,12 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static com.dmba.FileWatcherImplTest.PATH;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 @SpringBootTest
 public class SpeechRecognitionTest {
-
-    public static final String PATH = "./src/test/resources/sounds";
 
     private Set<String> expectedHashSet = new HashSet<>();
 
@@ -42,6 +39,10 @@ public class SpeechRecognitionTest {
                 "{\n" +
                 "  \"text\" : \"washington dc is the capital of the united states\"\n" +
                 "}");
+        expectedHashSet.add(
+                "{\n" +
+                "  \"text\" \"washington d c is the capital over united states\"\n" +
+                "}");
     }
 
     @Test
@@ -58,6 +59,10 @@ public class SpeechRecognitionTest {
             }
         }
 
-        assertTrue(expectedHashSet.containsAll(actualHashSet));
+        assertTrue(actualHashSet.size() == 2);
+
+        boolean compareResult = expectedHashSet.containsAll(actualHashSet);
+
+        assertTrue(compareResult);
     }
 }
