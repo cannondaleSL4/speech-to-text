@@ -13,7 +13,7 @@ This service utilizes the library from [AlphaCEPHEI](https://alphacephei.com/vos
 ## Setup
 
 1. **Build**
-    - Execute the `build.sh` script to build the service, package the artifacts in Docker, and push the Docker image to the microk8s repository.
+    - Execute the `build.sh` script to build the service, package the artifacts in Docker.
 
 2. **Microk8s Installation**
 ```

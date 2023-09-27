@@ -1,12 +1,12 @@
 package com.dmba.vosk;
 
 import com.dmba.config.SpeechProperties;
+import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 
 import org.vosk.Model;
 import org.vosk.Recognizer;
 
-import javax.annotation.PreDestroy;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.*;

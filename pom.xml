@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.15</version>
+        <version>3.1.2</version>
         <relativePath/>
     </parent>
 
@@ -46,7 +46,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.11.0</version> <!-- или другая актуальная версия -->
+            <version>2.11.0</version>
         </dependency>
 
 
@@ -61,13 +61,6 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-
-<!--        <dependency>-->
-<!--            <groupId>net.java.dev.jna</groupId>-->
-<!--            <artifactId>jna</artifactId>-->
-<!--            <version>5.7.0</version>-->
-<!--            <scope>compile</scope>-->
-<!--        </dependency>-->
 
     </dependencies>
 

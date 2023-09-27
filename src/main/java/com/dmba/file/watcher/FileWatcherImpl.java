@@ -3,22 +3,18 @@ package com.dmba.file.watcher;
 import com.dmba.file.service.FileFinder;
 import com.dmba.config.SpeechProperties;
 import com.dmba.speech.SpeechToText;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Instant;
 import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class FileWatcherImpl implements FileWatcher {
