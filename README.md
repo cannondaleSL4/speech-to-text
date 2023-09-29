@@ -15,22 +15,13 @@ This service utilizes the library from [AlphaCEPHEI](https://alphacephei.com/vos
 1. **Build**
     - Execute the `build.sh` script to build the service, package the artifacts in Docker.
 
-2. **Microk8s Installation**
+2. **Installation to minikube**
 ```
-sudo snap install microk8s --classic
-sudo usermod -a -G microk8s $USER
-sudo chown -f -R $USER ~/.kube
-sudo systemctl start snap.microk8s.daemon-kubelet
-microk8s enable helm3
-microk8s enable dns
-microk8s enable ingress
-microk8s enable metallb
-microk8s enable dashboard
+minikube start
+kubectl create namespace speech-to-text
+
 ```
 
-
-3. **Access Microk8s**
-   - Use [this link](http://127.0.0.1:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/) to access the Microk8s dashboard.
 
 4. **Helm Deployment**
 ```
@@ -38,7 +29,7 @@ microk8s kubectl create namespace speech-to-text
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
 helm install my-ingress ingress-nginx/ingress-nginx -n speech-to-text
-helm install speech-to-text . -n speech-to-text
+helm install speech-to-text . -n speech-to-text (for uninstall - 'helm uninstall speech-to-text -n speech-to-text')
 ```
 
 5. **Update Host Configuration**

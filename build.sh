@@ -30,3 +30,14 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Successfully built the Docker image: speech-to-text"
+
+# Step 3: Load Docker image into Minikube
+echo "Loading Docker image into Minikube..."
+docker save speech-to-text:latest | (eval $(minikube docker-env) && docker load)
+
+if [ $? -ne 0 ]; then
+    echo "Failed to load Docker image into Minikube!"
+    exit 1
+fi
+
+echo "Successfully loaded Docker image into Minikube"

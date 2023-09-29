@@ -7,7 +7,7 @@ replicaCount: 1
 serviceName: speech-to-text
 
 image:
-  repository: localhost/speech-to-text
+  repository: speech-to-text
   tag: latest
   pullPolicy: IfNotPresent
 
@@ -56,13 +56,13 @@ createPV: false
 
 resources:
   requests:
-    memory: "8Gi"
-    cpu: "2000m"
+    memory: "1Gi"
+    cpu: "200m"
   limits:
-    memory: "16Gi"
-    cpu: "3000m"
+    memory: "2Gi"
+    cpu: "1000m"
 
-javaOpts: "-Xmx14g"
+javaOpts: "-Xmx2g"
 
 speech:
   dirPath: "/path/to/data"
