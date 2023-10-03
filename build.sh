@@ -22,8 +22,9 @@
 #done
 
 # Step 2: Docker build
-#docker build -t speech-to-text-new .
-docker build --no-cache -t speech-to-text-new .
+#docker buildx build --platform linux/amd64,linux/arm64 -t speech-to-text-new:latest . --push
+docker build -t speech-to-text-new .
+#docker build --no-cache -t speech-to-text-new .
 
 if [ $? -ne 0 ]; then
     echo "Docker build failed!"

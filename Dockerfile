@@ -1,4 +1,4 @@
-# Start from the official OpenJDK 17 base image
+# Start with the official OpenJDK 17 base image
 FROM openjdk:17-jdk-slim
 
 # Set environment for non-interactive installation
@@ -6,59 +6,53 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Update and install required packages
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends make git wget automake g++ zlib1g-dev automake autoconf bzip2 unzip sox gfortran libtool subversion python2.7 python3 python3-pip patch && \
+    apt-get install -y --no-install-recommends make git wget cmake g++ zlib1g-dev automake autoconf bzip2 unzip sox gfortran libtool subversion python2.7 python3 python3-pip patch && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     ln -s /usr/bin/python2.7 /usr/bin/python
 
-# Clone Kaldi
-RUN git clone https://github.com/kaldi-asr/kaldi.git /opt/kaldi --origin upstream
+# Clone Kaldi for Vosk
+RUN git clone -b vosk --single-branch --depth=1 https://github.com/alphacep/kaldi /opt/kaldi
 
-# Download and compile OpenFST 1.8.2
-RUN wget http://www.openfst.org/twiki/pub/FST/FstDownload/openfst-1.8.2.tar.gz && \
-    tar xvf openfst-1.8.2.tar.gz && \
-    cd openfst-1.8.2/ && \
-    ./configure --prefix=/opt/kaldi/tools/openfst --enable-shared --enable-static && \
-    make && \
-    make install
-
-
-## Manually download and extract OpenBLAS
-WORKDIR /opt/kaldi/tools/extras
-
-# Download OpenBLAS
-RUN wget -O OpenBLAS-0.3.20.tar.gz https://codeload.github.com/OpenMathLib/OpenBLAS/legacy.tar.gz/refs/tags/v0.3.20
-
-# Extract the archive
-RUN tar xzf OpenBLAS-0.3.20.tar.gz && mv OpenMathLib-OpenBLAS-* OpenBLAS
-
-# Build and Install OpenBLAS
-RUN cd OpenBLAS \
-    && make PREFIX=$(pwd)/install USE_LOCKING=1 USE_THREAD=0 all \
-    && make PREFIX=$(pwd)/install install
-
-# Check Kaldi dependencies
+# Build tools and dependencies for Kaldi
 WORKDIR /opt/kaldi/tools
 
-# Delete the openfst directory before compiling Kaldi tools
-RUN rm -rf openfst/
+# Set compiler flags
+ENV CXXFLAGS="-O2"
 
-RUN extras/check_dependencies.sh
+# Build OpenFST and handle its failure gracefully
+RUN make openfst || true && \
+    rm -f openfst-*.tar.gz && \
+    ls -la
 
-# Compile Kaldi tools
-RUN make -j$(nproc)
+# Configure and build OpenFST
+RUN cd openfst-* && \
+    autoreconf -i && \
+    ./configure --prefix=`pwd` --enable-static --enable-shared --enable-far --enable-ngram-fsts --enable-lookahead-fsts --with-pic CXX="g++" \
+    CXXFLAGS="-O2" \
+    LDFLAGS="" LIBS="-ldl" && \
+    make && \
+    make install && \
+    cd ..
 
-# Set environment variables for compilation
-ENV CXXFLAGS="-I/opt/kaldi/tools/openfst/include"
-ENV LDFLAGS="-L/opt/kaldi/tools/openfst/lib"
-ENV LD_LIBRARY_PATH="/opt/kaldi/tools/openfst/lib:$LD_LIBRARY_PATH"
+# Build additional tools and dependencies
+RUN make cub
+RUN ./extras/install_openblas_clapack.sh
 
-# Configure Kaldi with updated FST version
+# Configure and compile Kaldi with OpenBLAS
 WORKDIR /opt/kaldi/src
-RUN ./configure --shared --mathlib=OPENBLAS --openblas-root=/opt/kaldi/tools/extras/OpenBLAS/install --fst-root=/opt/kaldi/tools/openfst --fst-version=1.8.2
+RUN ./configure --mathlib=OPENBLAS_CLAPACK --shared --fst-root=/opt/kaldi/tools/openfst-1.8.0 && make -j$(nproc) online2 lm rnnlm
 
-#Compile Kaldi
-RUN make -j clean depend && make -j$(nproc)
+# Clone vosk-api
+WORKDIR /opt
+RUN git clone https://github.com/alphacep/vosk-api --depth=1
+
+# Build Vosk API
+WORKDIR /opt/vosk-api/src
+ENV CPLUS_INCLUDE_PATH=/opt/kaldi/tools/openfst-1.8.0/include
+RUN ln -s /opt/kaldi/tools/openfst-1.8.0 /opt/kaldi/tools/openfst
+
+RUN KALDI_ROOT=/opt/kaldi make
 
 # Expose port for your application
 EXPOSE 8080
@@ -71,5 +65,5 @@ COPY ${JAR_FILE} app.jar
 
 ENV JAVA_OPTS=""
 
-# Uncomment the following lines if you're going to use this image to run a Java application
-#ENTRYPOINT ["java","-jar","/app.jar"]
+## Uncomment the following lines if you're going to use this image to run a Java application
+ENTRYPOINT ["java","-jar","/app.jar"]
