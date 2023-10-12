@@ -26,8 +26,45 @@ public class VoskService implements SpeechToTextModel<File> {
         initModel();
     }
 
+    public static void printDirectoryContents(String directoryPath) {
+        File directory = new File(directoryPath);
+        log.info("Checking the path: {}", directoryPath);
+
+        if (directory.isDirectory()) {
+            log.info("The path is a directory.");
+            File[] contents = directory.listFiles();
+
+            if (contents != null && contents.length > 0) {
+                log.info("Listing contents:");
+                for (File item : contents) {
+                    if(item.isDirectory()) {
+                        log.info("Directory: {}", item.getName());
+                    } else {
+                        log.info("File: {} (Size: {} bytes)", item.getName(), item.length());
+                    }
+                }
+            } else {
+                log.info("The directory is empty or there was an error reading its contents.");
+            }
+        } else if(directory.isFile()){
+            log.info("The path points to a file: {} (Size: {} bytes)", directory.getName(), directory.length());
+        } else {
+            log.info("The provided path is neither a directory nor a file.");
+        }
+    }
+
     private void initModel() {
         try {
+            //todo
+            // remove after debug
+            log.info("the files are: ");
+            printDirectoryContents(speechProperties.getDirPath());
+            printDirectoryContents(speechProperties.getModelPath());
+            log.info("SPEECH_DIR_PATH: {}", System.getenv("SPEECH_DIR_PATH"));
+            log.info("SPEECH_MODEL_PATH: {}", System.getenv("SPEECH_MODEL_PATH"));
+            log.info("SpeechProperties: {}", speechProperties.getDirPath());
+            log.info("SpeechProperties: {}", speechProperties.getModelPath());
+            log.info("The dir path is: {}", dirModel);
             this.model = new Model(dirModel);
         } catch (Exception e) {
             throw new RuntimeException("Error initializing the speech model", e);

@@ -38,6 +38,9 @@ public class FileWatcherImpl implements FileWatcher {
     }
 
     public void watch() {
+        //todo
+        //remove after debug
+        log.info("The path of dir: {}", dir.toString());
         FileAlterationObserver observer = new FileAlterationObserver(dir.toString());
         observer.addListener(new FileAlterationListenerAdaptor() {
 
